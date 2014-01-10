@@ -4,16 +4,23 @@ import numpy as np
 from numbers import Integral
 
 class KMeansPlusPlus:
-	def __init__(self,dataFrame,k,columns=None,maxIterations=None):
-		if not isinstance(dataFrame,DataFrame):
-			raise Exception("dataFrame argument is not a pandas DataFrame")
-		elif dataFrame.empty:
+	def __init__(self,data_frame,k,columns=None,max_iterations=None):
+		if not isinstance(data_frame,DataFrame):
+			raise Exception("data_frame argument is not a pandas DataFrame")
+		elif data_frame.empty:
 			raise Exception("The given data frame is empty")
 
-		self.dataFrame = dataFrame
-		self.numRows = dataFrame.shape[0]
-		self.centers = None
-		self.distance_matrix = None
+		if max_iterations is not None and max_iterations <= 0:
+			raise Exception("")
+
+
+		self.data_frame = data_frame # m x n
+		self.numRows = data_frame.shape[0] # m
+		self.centers = None # k x n, the i,j entry being the jth coordinate of center i
+		self.distance_matrix = None # m x k , the i,j entry represents the distance 
+									# from point i to center j (where i and j start at 0)
+		self.clusters = None # Series of length m, consisting of integers 0,1,...,k-1
+		self.previous_clusters = None
 
 		if not isinstance(k,Integral) or k <= 0:
 			raise Exception("The value of k must be a positive integer")
@@ -21,10 +28,10 @@ class KMeansPlusPlus:
 		self.k = k
 
 		if columns is None:
-			self.columns = dataFrame.columns
+			self.columns = data_frame.columns
 		else:
 			for col in columns:
-				if col not in dataFrame.columns:
+				if col not in data_frame.columns:
 					raise Exception("Column '%s' not found in the given DataFrame" % col)
 				if not self.__is_numeric(col):
 					raise Exception("The column '%s' is either not numeric or contains NaN values" % col)
@@ -46,7 +53,7 @@ class KMeansPlusPlus:
 			dice_roll = np.random.rand()
 			min_over_roll = normalized_distances[normalized_distances.cumsum() >= dice_roll].min()
 			index = normalized_distances[normalized_distances == min_over_roll].index[0]
-			rows.append(self.dataFrame[self.columns].irow(index))
+			rows.append(self.data_frame[self.columns].iloc[index,:])
 
 		self.centers = DataFrame(rows)
 
@@ -57,9 +64,69 @@ class KMeansPlusPlus:
 		column_dict = {}
 
 		for i in list(range(self.k)):
-			column_dict[i] = self.__distances_from_point(self.centers.irow(i))
+			column_dict[i] = self.__distances_from_point(self.centers.iloc[i,:])
 
 		self.distance_matrix = DataFrame(column_dict,columns=list(range(self.k)))
+
+	def __get_clusters(self):
+		if self.distance_matrix is None:
+			raise Exception("Must compute distances before closest centers can be calculated")
+
+		min_distances = self.distance_matrix.min(axis=1)
+
+		cluster_list = [
+			boolean_series.index[j][0]
+				for boolean_series in [
+					self.distance_matrix.iloc[1,:] == min_distances[i]
+						for i in list(range(self.numRows))
+				]
+				for j in list(range(self.k))
+			if boolean_series[j]
+		]
+
+		self.clusters = Series(cluster_list)
+
+	def __compute_new_centers(self):
+		if self.centers is None:
+			raise Exception("Centers not initialized!")
+
+		if self.clusters is None:
+			raise Exception("Clusters not computed!")
+
+		for i in list(range(self.k)):
+			self.centers.ix[i,:] = self.data_frame[self.columns].ix[self.clusters == i].mean()
+
+	def cluster(self):
+
+		self.__populate_initial_centers()
+		self.__compute_distances()
+		self.__get_clusters()
+
+		counter = 0
+
+		while True:
+			counter += 1
+
+			self.previous_clusters = self.clusters.copy()
+
+			self.__compute_new_centers()
+			self.__compute_distances()
+			self.__get_clusters()
+
+			if max_iterations is not None and counter >= max_iterations:
+				break
+			elif all(self.clusters == self.previous_clusters):
+				break
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -68,7 +135,7 @@ class KMeansPlusPlus:
 
 
 	def __distances_from_point(self,point):
-		return np.power(self.dataFrame[columns] - point,2).sum(axis=1) #pandas Series
+		return np.power(self.data_frame[columns] - point,2).sum(axis=1) #pandas Series
 
 	def __distances_from_point_list(self,point_list):
 		result = None
@@ -86,10 +153,10 @@ class KMeansPlusPlus:
 
 	def __grab_random_point(self):
 		index = np.random.random_integers(0,self.numRows - 1)
-		return self.dataFrame[self.columns].irow(index).values #NumPy array
+		return self.data_frame[self.columns].iloc[index,:].values #NumPy array
 
 
 
 
 	def __is_numeric(self,col):
-		return all(np.isreal(self.dataFrame[col])) and not any(np.isnan(self.dataFrame[col]))
+		return all(np.isreal(self.data_frame[col])) and not any(np.isnan(self.data_frame[col]))
