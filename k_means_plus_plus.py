@@ -4,14 +4,17 @@ import numpy as np
 from numbers import Integral
 
 class KMeansPlusPlus:
-	def __init__(self,data_frame,k,columns=None,max_iterations=None):
+	def __init__(self,data_frame,k
+			,columns=None
+			,max_iterations=None
+			,tolerance = 1e-5):
 		if not isinstance(data_frame,DataFrame):
 			raise Exception("data_frame argument is not a pandas DataFrame")
 		elif data_frame.empty:
 			raise Exception("The given data frame is empty")
 
 		if max_iterations is not None and max_iterations <= 0:
-			raise Exception("")
+			raise Exception("max_iterations must be positive!")
 
 
 		self.data_frame = data_frame # m x n
@@ -21,6 +24,7 @@ class KMeansPlusPlus:
 									# from point i to center j (where i and j start at 0)
 		self.clusters = None # Series of length m, consisting of integers 0,1,...,k-1
 		self.previous_clusters = None
+		self.max_iterations = max_iterations
 
 		if not isinstance(k,Integral) or k <= 0:
 			raise Exception("The value of k must be a positive integer")
@@ -74,13 +78,16 @@ class KMeansPlusPlus:
 
 		min_distances = self.distance_matrix.min(axis=1)
 
-		cluster_list = [
-			boolean_series.index[j][0]
-				for boolean_series in [
-					self.distance_matrix.iloc[i,:] == min_distances[i]
-						for i in list(range(len(self.columns)))
-				]
-				for j in list(range(self.k))
+		#We need to make sure the index 
+		min_distances.index = list(range(self.numRows))
+
+		cluster_list = [boolean_series.index[j]
+			for boolean_series in
+			[
+				self.distance_matrix.iloc[i,:] == min_distances.iloc[i]
+				for i in list(range(self.numRows))
+			]
+			for j in list(range(self.k))
 			if boolean_series[j]
 		]
 
@@ -113,7 +120,7 @@ class KMeansPlusPlus:
 			self._compute_distances()
 			self._get_clusters()
 
-			if max_iterations is not None and counter >= max_iterations:
+			if self.max_iterations is not None and counter >= self.max_iterations:
 				break
 			elif all(self.clusters == self.previous_clusters):
 				break
