@@ -6,8 +6,7 @@ from numbers import Integral
 class KMeansPlusPlus:
 	def __init__(self,data_frame,k
 			,columns=None
-			,max_iterations=None
-			,tolerance = 1e-5):
+			,max_iterations=None):
 		if not isinstance(data_frame,DataFrame):
 			raise Exception("data_frame argument is not a pandas DataFrame")
 		elif data_frame.empty:
@@ -91,7 +90,7 @@ class KMeansPlusPlus:
 			if boolean_series[j]
 		]
 
-		self.clusters = Series(cluster_list)
+		self.clusters = Series(cluster_list,index=self.data_frame.index)
 
 	def _compute_new_centers(self):
 		if self.centers is None:
