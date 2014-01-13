@@ -24,7 +24,6 @@ plt.savefig("three_clusters_scatterplot.png")
 # Cluster
 kmpp = KMeansPlusPlus(data,3)
 kmpp.cluster()
-kmpp.centers
 
 # Get a scatterplot that's color-coded by cluster
 colors = ["red" if x == 0 else "blue" if x == 1 else "green" for x in kmpp.clusters]
