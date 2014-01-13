@@ -1,12 +1,14 @@
 from pandas import DataFrame,Series
 import pandas as pd
 import numpy as np
+import warnings
 from numbers import Integral
 
 class KMeansPlusPlus:
 	def __init__(self,data_frame,k
 			,columns=None
-			,max_iterations=None):
+			,max_iterations=None
+			,appended_column_name=None):
 		if not isinstance(data_frame,DataFrame):
 			raise Exception("data_frame argument is not a pandas DataFrame")
 		elif data_frame.empty:
@@ -15,6 +17,9 @@ class KMeansPlusPlus:
 		if max_iterations is not None and max_iterations <= 0:
 			raise Exception("max_iterations must be positive!")
 
+		if not isinstance(k,Integral) or k <= 0:
+			raise Exception("The value of k must be a positive integer")
+
 
 		self.data_frame = data_frame # m x n
 		self.numRows = data_frame.shape[0] # m
@@ -22,12 +27,10 @@ class KMeansPlusPlus:
 		self.distance_matrix = None # m x k , the i,j entry represents the distance 
 									# from point i to center j (where i and j start at 0)
 		self.clusters = None # Series of length m, consisting of integers 0,1,...,k-1
-		self.previous_clusters = None
+		self.previous_clusters = None # To keep track of clusters in the previous iteration
+		
 		self.max_iterations = max_iterations
-
-		if not isinstance(k,Integral) or k <= 0:
-			raise Exception("The value of k must be a positive integer")
-
+		self.appended_column_name = appended_column_name
 		self.k = k
 
 		if columns is None:
@@ -123,6 +126,13 @@ class KMeansPlusPlus:
 				break
 			elif all(self.clusters == self.previous_clusters):
 				break
+
+		if self.appended_column_name is not None:
+			try:
+				self.data_frame[self.appended_column_name] = self.clusters
+			except:
+				warnings.warn("Unable to append a column named %s to your data." % self.appended_column_name)
+				warnings.warn("However, the clusters are available via the cluster attribute")
 
 	def _distances_from_point(self,point):
 		return np.power(self.data_frame[self.columns] - point,2).sum(axis=1) #pandas Series
