@@ -35,3 +35,5 @@ TODO:
 * Given a data frame, implement the so-called [Elbow Method](http://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set#The_Elbow_Method) to take a stab at an optimal value for `k`.
 
 * Make this into a proper Python module that can be installed via pip.
+
+* Python 3 compatibility (probably via six).
