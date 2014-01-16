@@ -23,7 +23,7 @@ Here are the constructor arguments:
 
 * `max_iterations=None`: The maximum number of times that you wish to iterate k-means. If no value is provided, then the iterations continue until stability is reached (ie the cluster assignments don't change between one iteration and the next).
 
-* `appended_column_name=None`: If this value is set with a string, then a column will be appended to your data with the given name that contains the cluster assignments (which are integers from 0 to `k`). If this argument is not set, then you still have access to the clusters via the `clusters` attribute.
+* `appended_column_name=None`: If this value is set with a string, then a column will be appended to your data with the given name that contains the cluster assignments (which are integers from 0 to `k-1`). If this argument is not set, then you still have access to the clusters via the `clusters` attribute.
 
 Once you've constructed a `KMeansPlusPlus` object, then just call the `cluster` method, and everything else should happen automagically. Take a look at the `examples` folder.
 
