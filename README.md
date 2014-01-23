@@ -10,6 +10,29 @@ Prerequisites
 * [Pandas](http://pandas.pydata.org/) (obviously).
 * [NumPy](http://numpy.org)
 
+Installation
+------------
+
+If you have [pip](http://www.pip-installer.org/en/latest/installing.html), then just do
+
+	pip install k-means-plus-plus
+
+Otherwise,
+
+* Clone the repository:
+
+		git clone https://github.com/jackmaney/k-means-plus-plus-pandas.git
+
+* Enter the newly-created folder containing the repo
+
+		cd k-means-plus-plus-pandas
+
+* And run the installation manually:
+
+		python setup.py install
+
+
+
 Usage
 -----
 
@@ -34,6 +57,6 @@ TODO:
 
 * Given a data frame, implement the so-called [Elbow Method](http://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set#The_Elbow_Method) to take a stab at an optimal value for `k`.
 
-* Make this into a proper Python module that can be installed via pip.
+* ~~Make this into a proper Python module that can be installed via pip.~~
 
 * Python 3 compatibility (probably via six).
