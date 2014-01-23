@@ -1,5 +1,5 @@
 from setuptools import setup
-from k_means_plus_plus import _version
+import k_means_plus_plus as kmpp
 
 requirements = []
 
@@ -11,13 +11,13 @@ with open("requirements.txt") as f:
 
 setup(
     name="k-means-plus-plus",
-    version=_version.__version__,
+    version=kmpp.__version__,
     author="Jack Maney",
     author_email="jackmaney@gmail.com",
     description="K-Means++ Clustering for Pandas DataFrames",
     long_description=open("README.md").read(),
     license="MIT",
     url="https://github.com/jackmaney/k-means-plus-plus-pandas",
-    packages=["k_means_plus_plus"],
+    packages=["clustering"],
     install_requires=requirements
 )
