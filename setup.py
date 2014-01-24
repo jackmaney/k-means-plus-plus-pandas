@@ -18,6 +18,8 @@ setup(
     long_description=open("README.md").read(),
     license="MIT",
     url="https://github.com/jackmaney/k-means-plus-plus-pandas",
+    download_url="https://github.com/jackmaney/k-means-plus-plus/releases/tag/v" +
+        kmpp.__version__,
     packages=["clustering"],
     install_requires=requirements
 )
