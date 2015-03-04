@@ -8,7 +8,8 @@ from numbers import Integral
 
 class KMeansPlusPlus:
 
-    def __init__(self, data_frame, k, columns=None, max_iterations=None, appended_column_name=None):
+    def __init__(self, data_frame, k, columns=None, max_iterations=None,
+                 appended_column_name=None):
         if not isinstance(data_frame, DataFrame):
             raise Exception("data_frame argument is not a pandas DataFrame")
         elif data_frame.empty:

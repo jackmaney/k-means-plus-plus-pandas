@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 import k_means_plus_plus as kmpp
 
 requirements = []
@@ -18,8 +18,6 @@ setup(
     long_description=open("README.md").read(),
     license="MIT",
     url="https://github.com/jackmaney/k-means-plus-plus-pandas",
-    download_url="https://github.com/jackmaney/k-means-plus-plus-pandas/archive/v" +
-        kmpp.__version__ + ".tar.gz",
-    packages=["clustering"],
+    packages=find_packages(),
     install_requires=requirements
 )

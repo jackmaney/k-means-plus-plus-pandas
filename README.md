@@ -3,6 +3,13 @@ K-means++ in Pandas
 
 An implementation of the [k-means++ clustering algorithm](http://en.wikipedia.org/wiki/K-means%2B%2B) using [Pandas](http://pandas.pydata.org/).
 
+IMPORTANT NOTE
+--------------
+
+**This package should not be used in production.** The implementation of k-means++ contained therein is much slower than [that of scikit-learn](http://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html). Use that instead.
+
+The only reason why I wrote any of this is to teach myself Pandas.
+
 Prerequisites
 -------------
 
