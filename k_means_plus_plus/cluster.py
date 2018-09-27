@@ -66,7 +66,7 @@ class KMeansPlusPlus:
                 distances = self._distances_from_point_list(rows)
 
             normalized_distances = distances / distances.sum()
-            normalized_distances.sort()
+            normalized_distances.sort_values()
             dice_roll = np.random.rand()
             min_over_roll = normalized_distances[
                 normalized_distances.cumsum() >= dice_roll].min()
